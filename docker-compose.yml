@@ -1,0 +1,8 @@
+services:
+  next:
+    build:
+      context: ./frontend/ecommerce-front-end
+      dockerfile: Dockerfile
+    container_name: ecommerce-frontend-next
+    ports:
+      - "5173:5173"
