@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import { formatCpf } from "@/lib/formatters"
 import { useRouter } from "next/navigation"
 
 export function SignupForm({
@@ -43,7 +44,7 @@ export function SignupForm({
         body: JSON.stringify({
           name,
           email,
-          cpf,
+          cpf: cpf.replace(/\D/g, ''),
           password,
         }),
       });
@@ -94,8 +95,9 @@ export function SignupForm({
                 <Input
                   id="cpf"
                   type="text"
-                  placeholder="12345678911"
-                  onChange={(e) => setCpf(e.target.value)}
+                  placeholder="123.456.789-11"
+                  value={cpf}
+                  onChange={(e) => setCpf(formatCpf(e.target.value))}
                   required
                 />
               </Field>

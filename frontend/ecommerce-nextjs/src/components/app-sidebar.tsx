@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import {
   Sidebar,
   SidebarContent,
@@ -37,10 +40,23 @@ const items = [
         title: "Procurar",
         url: "#",
         icon: Search
+    },
+    {
+        title: "Entrar",
+        url: "/login",
+        icon: User2,
     }
 ]
 
 export function AppSidebar() {
+  const [logged, setLogged] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setLogged(!!localStorage.getItem("token"));
+    }
+  }, []);
+
   return (
     <Sidebar>
         <SidebarHeader/>
@@ -49,7 +65,7 @@ export function AppSidebar() {
                 <SidebarGroupLabel>Ecommerce app</SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
-                        {items.map((item) => (
+                        {items.filter(item => !(item.title === 'Entrar' && logged)).map((item) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton asChild>
                                     <a href={item.url}>

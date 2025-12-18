@@ -37,4 +37,18 @@ export class UsersService {
             access_token: await this.jwtService.signAsync(payload),
         };
     }
+
+    async findById(id: number) {
+        return this.usersRepository.findOne({ where: { id } })
+    }
+
+    async updateUser(id: number, updates: Partial<Users>) {
+        await this.usersRepository.update(id, { ...updates })
+        return this.findById(id)
+    }
+
+    async changePassword(id: number, newPassword: string) {
+        await this.usersRepository.update(id, { password: newPassword })
+        return this.findById(id)
+    }
 }
