@@ -1,8 +1,50 @@
 services:
+  db:
+    image: mysql:8.0
+    container_name: ecommerce-db-mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=Upperhouse.11
+      - MYSQL_DATABASE=nestjs_api
+    ports:
+      - "3306:3306"
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pUpperhouse.11" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   next:
     build:
-      context: ./frontend/ecommerce-front-end
+      context: ./frontend/ecommerce-nextjs
       dockerfile: Dockerfile
     container_name: ecommerce-frontend-next
     ports:
       - "5173:5173"
+    networks:
+      - ecommerce-network
+
+  nest:
+    build:
+      context: ./backend/ecommerce-nestjs
+      dockerfile: Dockerfile
+    container_name: ecommerce-backend-nest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=Upperhouse.11
+      - DB_CONNECTION_NAME=nestjs_api
+      - JWT_PASSWORD=7X>Z£2ni1'B4
+    ports:
+      - "3000:3000"
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge

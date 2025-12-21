@@ -11,11 +11,6 @@ export class UsersController {
         private jwtService: JwtService,
     ) { }
 
-    @Get('/getUsers')
-    async getUsers() {
-        return this.userService.findAll()
-    }
-
     @Get('/me')
     async me(@Headers('authorization') auth: string) {
         if (!auth) throw new UnauthorizedException('Missing authorization')

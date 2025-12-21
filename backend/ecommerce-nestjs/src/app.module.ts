@@ -7,6 +7,8 @@ import { Users } from './typeorm/entities/user';
 import { Address } from './typeorm/entities/address';
 import { UsersModule } from './users/users.module';
 import { AddressModule } from './users/address/address.module';
+import { ProductModule } from './users/product/product.module';
+import { Product } from './typeorm/entities/product';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -19,11 +21,11 @@ import { AddressModule } from './users/address/address.module';
       username: configService.get<string>('DB_USERNAME'),
       password: configService.get<string>('DB_PASSWORD'),
       database: configService.get<string>('DB_CONNECTION_NAME'),
-      entities: [Users, Address],
+      entities: [Users, Address, Product],
       synchronize: true,
     }),
     inject: [ConfigService],
-  }), UsersModule, AddressModule],
+  }), UsersModule, AddressModule, ProductModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -7,9 +7,18 @@ import UserButton from "./userButton";
 import Notifications from "./notificationButton";
 import { ModeToggle } from "./themeButton";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
+    const [loggedIn, setLoggedIn] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            setLoggedIn(true);
+        }
+    }, []);
+
     return (
         <header className="min-w-full flex flex-col">
             <div className="flex justify-between space-x-2">
@@ -20,10 +29,20 @@ export default function Navbar() {
                     </InputGroupAddon>
                 </InputGroup>
                 <div className="pr-20 flex justify-between space-x-2">
-                    <ModeToggle/>
-                    <Button variant={"ghost"} onClick={() => router.push('/signup')} className="bg-bacground text-shadow-background cursor-pointer"><UserPlus/>Cadastrar-se</Button>
-                    <Notifications/>
-                    <UserButton/>
+                    {loggedIn ? (
+                        <>
+                            <ModeToggle />
+                            <Notifications />
+                            <UserButton />
+                        </>
+                    ) : (
+                        <>
+                            <ModeToggle />
+                            <Button variant={"ghost"} onClick={() => router.push('/signup')} className="bg-bacground text-shadow-background cursor-pointer"><UserPlus />Cadastrar-se</Button>
+                            <Notifications />
+                            <UserButton />
+                        </>
+                    )}
                 </div>
             </div>
         </header>

@@ -12,3 +12,12 @@ export type CreateAddressParams = {
     zip: string;
     country: string;
 }
+
+export type CreateProductParams = {
+    name: string;
+    price: number;
+    description: string;
+    code: string;
+    image: string;
+    stock: number;
+}
