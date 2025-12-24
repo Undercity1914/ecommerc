@@ -118,5 +118,16 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Smooth transition when theme changes */
+    transition: background-color 250ms ease-in-out, color 250ms ease-in-out, border-color 250ms ease-in-out, box-shadow 250ms ease-in-out, fill 250ms ease-in-out, stroke 250ms ease-in-out;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

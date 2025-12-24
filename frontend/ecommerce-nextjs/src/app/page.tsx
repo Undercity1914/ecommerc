@@ -1,11 +1,12 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/navbar";
+import { SellCards } from "@/components/sell-cards";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen min-w-screen overflow-x-hidden flex-col items-center justify-between bg-[#FAFAFA] font-sans dark:bg-black">
-      <SidebarProvider>
+      <SidebarProvider >
         <AppSidebar />
         <SidebarInset>
           <header className="flex flex-col border-b-2">
@@ -14,6 +15,7 @@ export default function Home() {
               <Navbar />
             </div>
           </header>
+          <SellCards/>
         </SidebarInset>
       </SidebarProvider>
     </div>

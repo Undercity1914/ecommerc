@@ -21,3 +21,7 @@ export type CreateProductParams = {
     image: string;
     stock: number;
 }
+
+export type CreateWishlistParams = { }
+
+export type CreateCartParams = { }
