@@ -9,6 +9,10 @@ import { UsersModule } from './users/users.module';
 import { AddressModule } from './users/address/address.module';
 import { ProductModule } from './users/product/product.module';
 import { Product } from './typeorm/entities/product';
+import { Cart } from './typeorm/entities/cart';
+import { Wishlist } from './typeorm/entities/wishlist';
+import { WishlistModule } from './users/wishlist/wishlist.module';
+import { CartModule } from './users/cart/cart.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -21,11 +25,11 @@ import { Product } from './typeorm/entities/product';
       username: configService.get<string>('DB_USERNAME'),
       password: configService.get<string>('DB_PASSWORD'),
       database: configService.get<string>('DB_CONNECTION_NAME'),
-      entities: [Users, Address, Product],
+      entities: [Users, Address, Product, Cart, Wishlist],
       synchronize: true,
     }),
     inject: [ConfigService],
-  }), UsersModule, AddressModule, ProductModule],
+  }), UsersModule, AddressModule, ProductModule, CartModule, WishlistModule],
   controllers: [AppController],
   providers: [AppService],
 })

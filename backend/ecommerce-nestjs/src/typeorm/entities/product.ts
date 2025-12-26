@@ -25,7 +25,7 @@ export class Product {
     @Column({ type: 'int', nullable: false })
     stock: number;
 
-    @ManyToOne(() => Cart, (cart) => cart.product, { nullable: false, onDelete: 'CASCADE' })
+    @ManyToOne(() => Cart, (cart) => cart.product, { nullable: true, onDelete: 'CASCADE' })
     cart: Cart;
 
     @ManyToOne(() => Wishlist, (wishlist) => wishlist.product, { nullable: false, onDelete: 'CASCADE' })

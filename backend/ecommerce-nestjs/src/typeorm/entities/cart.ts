@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./user";
 import { Product } from "./product";
 
@@ -7,7 +7,7 @@ export class Cart {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Product, (product) => product.cart, { nullable: false, onDelete: 'CASCADE' })
+    @OneToMany(() => Product, (product) => product.cart)
     product: Product;
 
     @OneToOne(() => Users, (user) => user.cart, { nullable: false, onDelete: 'CASCADE' })

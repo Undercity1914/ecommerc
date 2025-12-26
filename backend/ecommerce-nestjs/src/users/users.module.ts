@@ -7,10 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AddressModule } from './address/address.module';
 import { ProductModule } from './product/product.module';
-import { ProductService } from './service/product/product.service';
 import { CartModule } from './cart/cart.module';
-import { CartService } from './service/cart/cart.service';
-import { WishlistService } from './service/wishlist/wishlist.service';
 import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
@@ -32,6 +29,6 @@ import { WishlistModule } from './wishlist/wishlist.module';
   ],
   exports: [JwtModule],
   controllers: [UsersController],
-  providers: [UsersService, CartService, WishlistService],
+  providers: [UsersService],
 })
 export class UsersModule { }

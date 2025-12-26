@@ -7,7 +7,7 @@ export class Wishlist {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Product, (product) => product.wishlist, { nullable: false, onDelete: 'CASCADE' })
+    @ManyToOne(() => Product, (product) => product.wishlist, { nullable: true, onDelete: 'CASCADE' })
     product: Product;
 
     @OneToOne(() => Users, (user) => user.wishlist, { nullable: false, onDelete: 'CASCADE' })
