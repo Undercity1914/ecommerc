@@ -36,4 +36,9 @@ export class ProductService {
         const result = await this.productRepository.delete(id);
         return (result.affected ?? 0) > 0;
     }
+
+    async createMany(productsData: CreateProductParams[]): Promise<Product[]> {
+        const products = this.productRepository.create(productsData);
+        return this.productRepository.save(products);
+    }
 }

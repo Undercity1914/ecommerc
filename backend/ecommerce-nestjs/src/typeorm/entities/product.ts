@@ -28,6 +28,6 @@ export class Product {
     @ManyToOne(() => Cart, (cart) => cart.product, { nullable: true, onDelete: 'CASCADE' })
     cart: Cart;
 
-    @ManyToOne(() => Wishlist, (wishlist) => wishlist.product, { nullable: false, onDelete: 'CASCADE' })
+    @ManyToOne(() => Wishlist, (wishlist) => wishlist.product, { nullable: true, onDelete: 'CASCADE' })
     wishlist: Wishlist;
 }

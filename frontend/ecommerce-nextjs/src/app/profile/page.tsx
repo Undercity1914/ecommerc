@@ -35,7 +35,6 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
   const [profileAlert, setProfileAlert] = useState<{ variant?: 'default' | 'destructive'; title?: string; description?: string } | null>(null)
   const [savingProfile, setSavingProfile] = useState(false)
 
-  // change password state
   const [pwdCurrentForChange, setPwdCurrentForChange] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmNewPassword, setConfirmNewPassword] = useState('')
@@ -50,7 +49,6 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
       return
     }
 
-    // fetch current user profile and fill the form
     ;(async () => {
       try {
         const res = await fetch('http://localhost:3000/users/me', {
@@ -61,7 +59,6 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
           },
         })
         if (res.status === 401) {
-          // session invalid or token malformed -> clear and force login
           localStorage.removeItem('token')
           router.push('/login')
           return

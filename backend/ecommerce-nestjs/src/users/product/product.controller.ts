@@ -32,6 +32,11 @@ export class ProductController {
         return this.productService.createProduct(productData);
     }
 
+    @Post('/bulk-create')
+    async createProductFromArray(@Body() products: CreateProductDto[]) {
+        return await this.productService.createMany(products);
+    }
+
     @Patch('/:id')
     async updateProduct(
         @Param('id', ParseIntPipe) id: number,
