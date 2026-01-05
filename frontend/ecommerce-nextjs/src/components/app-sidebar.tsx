@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { ChevronUp, Home, Inbox, Search, ShoppingCart, User2 } from "lucide-react"
+import Cart from "./cart"
 import { NavUser } from "./navUser"
 
 const users = {
@@ -50,6 +51,7 @@ const items = [
 
 export function AppSidebar() {
   const [logged, setLogged] = useState(false);
+    const [cartOpen, setCartOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -68,10 +70,17 @@ export function AppSidebar() {
                         {items.filter(item => !(item.title === 'Entrar' && logged)).map((item) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton asChild>
-                                    <a href={item.url}>
-                                        <item.icon/>
-                                        <span>{item.title}</span>
-                                    </a>
+                                    {item.title === 'Carrinho' ? (
+                                        <button onClick={() => setCartOpen(true)} className="flex items-center gap-2">
+                                            <item.icon/>
+                                            <span>{item.title}</span>
+                                        </button>
+                                    ) : (
+                                        <a href={item.url}>
+                                            <item.icon/>
+                                            <span>{item.title}</span>
+                                        </a>
+                                    )}
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         ))}
@@ -82,8 +91,9 @@ export function AppSidebar() {
             </SidebarGroup>
         </SidebarContent>
         <SidebarFooter className="pb-20">
-            <NavUser user={users.user}/>
+            <NavUser />
         </SidebarFooter>
+        <Cart open={cartOpen} onOpenChange={setCartOpen} />
     </Sidebar>
   )
 }

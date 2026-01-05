@@ -27,6 +27,13 @@ export class WishlistController {
         return this.wishlistService.pushProductToWishlist(productId, userId);
     }
 
+    @Post('/remove')
+    async removeWishlist(@Headers('authorization') auth: string, @Body() body: any) {
+        const userId = this.verifyTokenGetId(auth)
+        const { productId } = body;
+        return this.wishlistService.removeProductFromWishlist(productId, userId);
+    }
+
     @Get('/all')
     async getAll(@Headers('authorization') auth: string) {
         const userId = this.verifyTokenGetId(auth)

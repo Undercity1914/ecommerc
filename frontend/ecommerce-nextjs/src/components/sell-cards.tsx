@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, Check } from "lucide-react";
 
 export function SellCards() {
     interface Product {
@@ -98,12 +98,21 @@ export function SellCards() {
                                     const currently = wishlistIds.includes(p.id);
                                     setWishlistIds((prev) => currently ? prev.filter(id => id !== p.id) : [...prev, p.id]);
                                     try {
-                                        const res = await fetch("http://localhost:3000/wishlist/create", {
-                                            method: "POST",
-                                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                                            body: JSON.stringify({ productId: p.id }),
-                                        });
-                                        if (!res.ok) throw new Error(`Wishlist API error ${res.status}`);
+                                        if (!currently) {
+                                            const res = await fetch("http://localhost:3000/wishlist/create", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                body: JSON.stringify({ productId: p.id }),
+                                            });
+                                            if (!res.ok) throw new Error(`Wishlist API error ${res.status}`);
+                                        } else {
+                                            const res = await fetch("http://localhost:3000/wishlist/remove", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                body: JSON.stringify({ productId: p.id }),
+                                            });
+                                            if (!res.ok) throw new Error(`Wishlist API error ${res.status}`);
+                                        }
                                     } catch (err) {
                                         console.error(err);
                                         setWishlistIds((prev) => currently ? [...prev, p.id] : prev.filter(id => id !== p.id));
@@ -118,23 +127,40 @@ export function SellCards() {
                                 variant={cartIds.includes(p.id) ? "secondary" : "ghost"}
                                 size="sm"
                                 onClick={async () => {
+                                    const token = localStorage.getItem('token');
+                                    if (!token) { router.push('/login'); return; }
                                     const currently = cartIds.includes(p.id);
+                                    // optimistic toggle
                                     setCartIds((prev) => currently ? prev.filter(id => id !== p.id) : [...prev, p.id]);
                                     try {
-                                        const res = await fetch("http://localhost:3000/cart/create", {
-                                            method: "POST",
-                                            headers: { "Content-Type": "application/json" },
-                                            body: JSON.stringify({ productId: p.id, quantity: 1 }),
-                                        });
-                                        if (!res.ok) throw new Error(`Cart API error ${res.status}`);
+                                        if (!currently) {
+                                            const res = await fetch("http://localhost:3000/cart/create", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                body: JSON.stringify({ productId: p.id, quantity: 1 }),
+                                            });
+                                            if (!res.ok) throw new Error(`Cart API error ${res.status}`);
+                                        } else {
+                                            const res = await fetch("http://localhost:3000/cart/remove", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                body: JSON.stringify({ productId: p.id }),
+                                            });
+                                            if (!res.ok) throw new Error(`Cart API error ${res.status}`);
+                                        }
                                     } catch (err) {
                                         console.error(err);
+                                        // revert optimistic change
                                         setCartIds((prev) => currently ? [...prev, p.id] : prev.filter(id => id !== p.id));
                                     }
                                 }}
                                 className="p-2"
                             >
-                                <ShoppingCart className="w-4 h-4" />
+                                {cartIds.includes(p.id) ? (
+                                    <Check className="w-4 h-4 text-green-500" />
+                                ) : (
+                                    <ShoppingCart className="w-4 h-4" />
+                                )}
                             </Button>
                         </div>
 

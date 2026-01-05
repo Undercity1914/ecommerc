@@ -10,12 +10,14 @@ import {
 import { CreditCard, Heart, LogIn, LogOut, ShoppingCart, User, User2, WashingMachine } from "lucide-react";
 import { Button } from "./ui/button";
 import Wishlist from "./wishlist";
+import Cart from "./cart";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function UserButton() {
     const [logged, setLogged] = useState(false);
     const [wishlistOpen, setWishlistOpen] = useState(false);
+    const [cartOpen, setCartOpen] = useState(false);
 
     const router = useRouter();
 
@@ -44,8 +46,8 @@ export default function UserButton() {
                         <>
                             <DropdownMenuGroup>
                                 <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}><User />Perfil</DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer"><CreditCard />Pedidos</DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer"><ShoppingCart />Carrinho</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/orders')}><CreditCard />Pedidos</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer" onClick={() => setCartOpen(true)}><ShoppingCart />Carrinho</DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer" onClick={() => setWishlistOpen(true)}><Heart />Lista de Desejos</DropdownMenuItem>
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
@@ -63,6 +65,7 @@ export default function UserButton() {
                 </DropdownMenuContent>
             </DropdownMenu>
             <Wishlist open={wishlistOpen} onOpenChange={setWishlistOpen} />
+            <Cart open={cartOpen} onOpenChange={setCartOpen} />
         </div>
     );
 }

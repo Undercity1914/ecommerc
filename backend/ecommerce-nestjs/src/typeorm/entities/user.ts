@@ -20,6 +20,9 @@ export class Users {
     @Column({ nullable: false })
     password: string;
 
+    @Column({ nullable: true })
+    avatar?: string;
+
     @OneToMany(() => Address, (address) => address.user)
     addresses: Address[];
 

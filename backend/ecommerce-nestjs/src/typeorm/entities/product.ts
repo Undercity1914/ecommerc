@@ -1,5 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Cart } from "./cart";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Wishlist } from "./wishlist";
 
 @Entity({ name: 'product' })
@@ -25,8 +24,7 @@ export class Product {
     @Column({ type: 'int', nullable: false })
     stock: number;
 
-    @ManyToOne(() => Cart, (cart) => cart.product, { nullable: true, onDelete: 'CASCADE' })
-    cart: Cart;
+
 
     @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
     wishlist: Wishlist[];

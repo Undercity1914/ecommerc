@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { formatCpf } from "@/lib/formatters"
 import Addresses from "@/components/addresses"
@@ -41,6 +41,8 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
   const [pwdAlert, setPwdAlert] = useState<{ variant?: 'default' | 'destructive'; title?: string; description?: string } | null>(null)
 
   const router = useRouter()
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(defaultValues?.avatar)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -68,6 +70,7 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
         setName(data.name || '')
         setEmail(data.email || '')
         setCpf(formatCpf(data.cpf || ''))
+        setAvatarUrl(data.avatar || defaultValues?.avatar)
       } catch (e) {
         console.error('Failed to load profile', e)
         setProfileAlert({ variant: 'destructive', title: 'Erro', description: 'Não foi possível carregar seus dados.' })
@@ -124,6 +127,7 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
       setName(data.name || '')
       setEmail(data.email || '')
       setCpf(formatCpf(data.cpf || ''))
+      setAvatarUrl(data.avatar || avatarUrl)
       setCurrentPassword('')
       setProfileAlert({ variant: 'default', title: 'Sucesso', description: 'Perfil atualizado.' })
     } catch (e) {
@@ -131,6 +135,34 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
       setProfileAlert({ variant: 'destructive', title: 'Erro', description: 'Falha ao salvar perfil.' })
     } finally {
       setSavingProfile(false)
+    }
+  }
+
+  async function uploadAvatar(file: File | null) {
+    if (!file) return
+    const token = localStorage.getItem('token')
+    const fd = new FormData()
+    fd.append('avatar', file)
+    try {
+      const res = await fetch('http://localhost:3000/users/me/avatar', {
+        method: 'PATCH',
+        body: fd,
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        }
+      })
+      if (res.status === 401) {
+        localStorage.removeItem('token')
+        router.push('/login')
+        return
+      }
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
+      setAvatarUrl(data.avatar)
+      setProfileAlert({ variant: 'default', title: 'Sucesso', description: 'Avatar atualizado.' })
+    } catch (e) {
+      console.error('Failed to upload avatar', e)
+      setProfileAlert({ variant: 'destructive', title: 'Erro', description: 'Falha ao enviar avatar.' })
     }
   }
 
@@ -176,17 +208,21 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
       <div className="w-full max-w-2xl space-y-8 p-6 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xs rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
         <div className="flex items-center justify-center gap-6">
           <Avatar className="h-24 w-24 rounded-full border-2 border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
-            <AvatarImage src={defaultValues?.avatar} className="rounded-full object-cover" />
-            <AvatarFallback className="bg-zinc-100 dark:bg-zinc-900">SC</AvatarFallback>
+            <AvatarImage src={avatarUrl} className="rounded-full object-cover" />
+            <AvatarFallback className="bg-zinc-100 dark:bg-zinc-900">{(name && name.charAt(0)) || (email && email.charAt(0)) || 'SC'}</AvatarFallback>
           </Avatar>
-          <Button
-            variant="outline"
-            className="h-24 w-24 rounded-full border-2 border-dashed border-zinc-200/80 dark:border-zinc-800/80 
-                             hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900/50
-                             transition-colors shadow-sm"
-          >
-            <Sparkles className="h-6 w-6 text-zinc-600 dark:text-zinc-400" />
-          </Button>
+          <div>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => uploadAvatar(e.target.files ? e.target.files[0] : null)} />
+            <Button
+              variant="outline"
+              className="h-24 w-24 rounded-full border-2 border-dashed border-zinc-200/80 dark:border-zinc-800/80 
+                               hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900/50
+                               transition-colors shadow-sm"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Sparkles className="h-6 w-6 text-zinc-600 dark:text-zinc-400" />
+            </Button>
+          </div>
         </div>
         <p className="text-zinc-700 dark:text-zinc-300 w-full text-center text-sm hover:cursor-pointer">
           Upload / Generate a new avatar
