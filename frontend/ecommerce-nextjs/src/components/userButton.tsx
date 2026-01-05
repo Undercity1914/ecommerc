@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { CreditCard, Heart, LogIn, LogOut, ShoppingCart, User, User2, WashingMachine } from "lucide-react";
 import { Button } from "./ui/button";
+import Wishlist from "./wishlist";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function UserButton() {
     const [logged, setLogged] = useState(false);
+    const [wishlistOpen, setWishlistOpen] = useState(false);
 
     const router = useRouter();
 
@@ -44,7 +46,7 @@ export default function UserButton() {
                                 <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}><User />Perfil</DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer"><CreditCard />Pedidos</DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer"><ShoppingCart />Carrinho</DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer"><Heart />Lista de Desejos</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer" onClick={() => setWishlistOpen(true)}><Heart />Lista de Desejos</DropdownMenuItem>
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}><LogOut />Sair</DropdownMenuItem>
@@ -60,6 +62,7 @@ export default function UserButton() {
                     )}
                 </DropdownMenuContent>
             </DropdownMenu>
+            <Wishlist open={wishlistOpen} onOpenChange={setWishlistOpen} />
         </div>
     );
 }

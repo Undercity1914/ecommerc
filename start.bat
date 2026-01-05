@@ -1,0 +1,2 @@
+start cmd /k "cd /d C:\Users\marco\OneDrive\Documentos\ecommerce\backend\ecommerce-nestjs && npm run start"
+start cmd /k "cd /d C:\Users\marco\OneDrive\Documentos\ecommerce\frontend\ecommerce-nextjs && npm run dev -- -p 5173"

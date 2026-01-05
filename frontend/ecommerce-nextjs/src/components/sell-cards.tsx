@@ -10,6 +10,9 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Heart } from "lucide-react";
 
 export function SellCards() {
     interface Product {
@@ -25,6 +28,8 @@ export function SellCards() {
     const [list, setList] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [cartIds, setCartIds] = useState<number[]>([]);
+    const [wishlistIds, setWishlistIds] = useState<number[]>([]);
 
     useEffect(() => {
         const load = async () => {
@@ -46,6 +51,26 @@ export function SellCards() {
         load();
     }, []);
 
+    const router = useRouter();
+
+    useEffect(() => {
+        const loadWishlist = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const headers: any = {};
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+                const res = await fetch('http://localhost:3000/wishlist/all', { headers });
+                if (!res.ok) return;
+                const data = await res.json();
+                const ids = (data ?? []).map((w: any) => w.product?.id).filter(Boolean) as number[];
+                setWishlistIds(ids);
+            } catch (err) {
+                console.error('Could not load wishlist', err);
+            }
+        };
+        loadWishlist();
+    }, []);
+
     const formatPrice = (value: number | string) => {
         const n = typeof value === 'string' ? parseFloat(value) : value;
         if (Number.isNaN(n)) return "R$ 0,00";
@@ -59,10 +84,64 @@ export function SellCards() {
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {list.map((p) => (
-                    <Card key={p.id} className="overflow-hidden">
+                    <Card key={p.id} className="overflow-hidden rounded-lg shadow-sm">
+                        <div className="flex items-center justify-end gap-2 p-3">
+                            <Button
+                                variant={wishlistIds.includes(p.id) ? "secondary" : "ghost"}
+                                size="sm"
+                                onClick={async () => {
+                                    const token = localStorage.getItem('token');
+                                    if (!token) {
+                                        router.push('/login');
+                                        return;
+                                    }
+                                    const currently = wishlistIds.includes(p.id);
+                                    setWishlistIds((prev) => currently ? prev.filter(id => id !== p.id) : [...prev, p.id]);
+                                    try {
+                                        const res = await fetch("http://localhost:3000/wishlist/create", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                            body: JSON.stringify({ productId: p.id }),
+                                        });
+                                        if (!res.ok) throw new Error(`Wishlist API error ${res.status}`);
+                                    } catch (err) {
+                                        console.error(err);
+                                        setWishlistIds((prev) => currently ? [...prev, p.id] : prev.filter(id => id !== p.id));
+                                    }
+                                }}
+                                className="p-2"
+                            >
+                                <Heart className={`${wishlistIds.includes(p.id) ? 'text-red-500' : ''} w-4 h-4`} />
+                            </Button>
+
+                            <Button
+                                variant={cartIds.includes(p.id) ? "secondary" : "ghost"}
+                                size="sm"
+                                onClick={async () => {
+                                    const currently = cartIds.includes(p.id);
+                                    setCartIds((prev) => currently ? prev.filter(id => id !== p.id) : [...prev, p.id]);
+                                    try {
+                                        const res = await fetch("http://localhost:3000/cart/create", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ productId: p.id, quantity: 1 }),
+                                        });
+                                        if (!res.ok) throw new Error(`Cart API error ${res.status}`);
+                                    } catch (err) {
+                                        console.error(err);
+                                        setCartIds((prev) => currently ? [...prev, p.id] : prev.filter(id => id !== p.id));
+                                    }
+                                }}
+                                className="p-2"
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                            </Button>
+                        </div>
+
                         <div className="relative">
                             <img src={p.image} alt={p.name} className="w-full h-56 object-cover" />
                         </div>
+
                         <CardContent>
                             <h3 className="text-sm line-clamp-2 mb-2">{p.name}</h3>
                             <div className="font-bold text-lg">{formatPrice(p.price)}</div>

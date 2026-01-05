@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Cart } from "./cart";
 import { Wishlist } from "./wishlist";
 
@@ -28,6 +28,6 @@ export class Product {
     @ManyToOne(() => Cart, (cart) => cart.product, { nullable: true, onDelete: 'CASCADE' })
     cart: Cart;
 
-    @ManyToOne(() => Wishlist, (wishlist) => wishlist.product, { nullable: true, onDelete: 'CASCADE' })
-    wishlist: Wishlist;
+    @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
+    wishlist: Wishlist[];
 }
